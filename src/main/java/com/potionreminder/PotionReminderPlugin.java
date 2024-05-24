@@ -7,6 +7,9 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.Varbits;
+import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -20,6 +23,9 @@ public class PotionReminderPlugin extends Plugin
 {
 	@Inject
 	private Client client;
+
+	@Inject
+	private Notifier notifier;
 
 	@Inject
 	private PotionReminderConfig config;
@@ -42,6 +48,15 @@ public class PotionReminderPlugin extends Plugin
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
+		}
+	}
+
+	@Subscribe
+	public void onVarbitChanged(VarbitChanged varbitChanged)
+	{
+		if (varbitChanged.getVarbitId() == Varbits.STAMINA_EFFECT && varbitChanged.getValue() == 0)
+		{
+			notifier.notify("Stamina enhancement is expiring!");
 		}
 	}
 

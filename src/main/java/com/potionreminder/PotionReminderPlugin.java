@@ -1,12 +1,12 @@
 package com.potionreminder;
 
 import com.google.inject.Provides;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.IntUnaryOperator;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.Varbits;
 import net.runelite.client.Notifier;
@@ -21,6 +21,17 @@ import net.runelite.client.plugins.PluginDescriptor;
 )
 public class PotionReminderPlugin extends Plugin
 {
+	private enum Status
+	{
+		STAMINA,
+		ANTIFIRE,
+		ANTIPOISON,
+		ANTIVENOM
+	}
+
+	private final Map<Status, NotificationTimer> timers = new HashMap<>();
+	private static final int STAMINA_MULTIPLIER = 10;
+
 	@Inject
 	private Client client;
 
@@ -30,33 +41,13 @@ public class PotionReminderPlugin extends Plugin
 	@Inject
 	private PotionReminderConfig config;
 
-	@Override
-	protected void startUp() throws Exception
-	{
-		log.info("Example started!");
-	}
-
-	@Override
-	protected void shutDown() throws Exception
-	{
-		log.info("Example stopped!");
-	}
-
 	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	public void onVarbitChanged(VarbitChanged event)
 	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
+		if (event.getVarbitId() == Varbits.STAMINA_EFFECT && config.showStamina())
 		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
-		}
-	}
-
-	@Subscribe
-	public void onVarbitChanged(VarbitChanged varbitChanged)
-	{
-		if (varbitChanged.getVarbitId() == Varbits.STAMINA_EFFECT && varbitChanged.getValue() == 0)
-		{
-			notifier.notify("Stamina enhancement is expiring!");
+			final int totalDuration = client.getVarbitValue(Varbits.STAMINA_EFFECT);
+			handleTimer(Status.STAMINA, totalDuration, i -> i * STAMINA_MULTIPLIER);
 		}
 	}
 
@@ -64,5 +55,49 @@ public class PotionReminderPlugin extends Plugin
     PotionReminderConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(PotionReminderConfig.class);
+	}
+
+	public void notifyClient()
+	{
+		notifier.notify("Stamina enhancement is expiring!");
+	}
+
+	private void handleTimer(Status status, final int varValue, final IntUnaryOperator tickDuration)
+	{
+		int durationTicks = tickDuration.applyAsInt(varValue);
+		handleTimer(status, durationTicks);
+	}
+
+	private void handleTimer(Status status, final int ticks)
+	{
+		NotificationTimer timer = timers.get(status);
+
+		if (ticks <= 0)
+		{
+			removeTimer(status);
+		}
+		else if (timer == null || ticks > timer.getTicks())
+		{
+			NotificationTimer newTimer = createTimer(ticks);
+			timers.put(status, newTimer);
+		}
+		else
+		{
+			timer.setTicks(ticks);
+		}
+	}
+
+	private NotificationTimer createTimer(final int ticks)
+	{
+		return new NotificationTimer(ticks, this);
+	}
+
+	private void removeTimer(Status status)
+	{
+		final NotificationTimer timer = timers.remove(status);
+		if (timer != null)
+		{
+			timer.stop();
+		}
 	}
 }

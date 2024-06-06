@@ -15,7 +15,7 @@ public interface PotionReminderConfig extends Config
 			description = "The amount of seconds before potion expires to notify.",
 			position = 2
 	)
-	@Units(Units.SECONDS)
+	@Units(Units.MILLISECONDS)
 	default int notificationOffset()
 	{
 		return 0;

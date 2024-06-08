@@ -8,7 +8,6 @@ import net.runelite.client.config.Units;
 @ConfigGroup("example")
 public interface PotionReminderConfig extends Config
 {
-
 	@ConfigItem(
 			keyName = "notificationOffset",
 			name = "Notification Offset",

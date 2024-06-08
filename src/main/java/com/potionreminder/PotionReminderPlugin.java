@@ -62,13 +62,13 @@ public class PotionReminderPlugin extends Plugin
 		notifier.notify("Stamina enhancement is expiring!");
 	}
 
-	private void handleTimer(Status status, final int varValue, final IntUnaryOperator tickDuration)
+	private void handleTimer(final Status status, final int varValue, final IntUnaryOperator tickDuration)
 	{
 		int durationTicks = tickDuration.applyAsInt(varValue);
 		handleTimer(status, durationTicks);
 	}
 
-	private void handleTimer(Status status, final int ticks)
+	private void handleTimer(final Status status, final int ticks)
 	{
 		NotificationTimer timer = timers.get(status);
 
@@ -78,8 +78,7 @@ public class PotionReminderPlugin extends Plugin
 		}
 		else if (timer == null || ticks > timer.getTicks())
 		{
-			NotificationTimer newTimer = createTimer(ticks);
-			timers.put(status, newTimer);
+			createTimer(status, ticks);
 		}
 		else
 		{
@@ -87,12 +86,14 @@ public class PotionReminderPlugin extends Plugin
 		}
 	}
 
-	private NotificationTimer createTimer(final int ticks)
+	private void createTimer(final Status status, final int ticks)
 	{
-		return new NotificationTimer(ticks, this);
+		removeTimer(status);
+		NotificationTimer newTimer = new NotificationTimer(ticks, this, config);
+		timers.put(status, newTimer);
 	}
 
-	private void removeTimer(Status status)
+	private void removeTimer(final Status status)
 	{
 		final NotificationTimer timer = timers.remove(status);
 		if (timer != null)

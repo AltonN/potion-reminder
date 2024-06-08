@@ -1,6 +1,5 @@
 package com.potionreminder;
 
-import javax.inject.Inject;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.Executors;
@@ -12,20 +11,19 @@ public class NotificationTimer
 {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final PotionReminderPlugin plugin;
+    private final PotionReminderConfig config;
     private final Instant endTime;
     private int ticks;
 
-    @Inject
-    private PotionReminderConfig config;
-
-    NotificationTimer(final int ticks, PotionReminderPlugin plugin)
+    NotificationTimer(final int ticks, PotionReminderPlugin plugin, PotionReminderConfig config)
     {
         final Duration duration = Duration.of(ticks, RSTimeUnit.GAME_TICKS);
         this.endTime = Instant.now().plus(duration);
         this.plugin = plugin;
+        this.config = config;
         this.ticks = ticks;
 
-        scheduler.scheduleAtFixedRate(this::checkDuration, 0, 100, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::checkDuration, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     private void checkDuration()
@@ -34,23 +32,22 @@ public class NotificationTimer
         if (remainingTime.toMillis() <= config.notificationOffset())
         {
             plugin.notifyClient();
-            scheduler.shutdown();
+            stop();
         }
     }
 
     public int getTicks()
     {
-        // Implement me
-        return 0;
+        return this.ticks;
     }
 
     public void setTicks(final int ticks)
     {
-        // Implement me
+        this.ticks = ticks;
     }
 
     public void stop()
     {
-        // Implement me
+        scheduler.shutdownNow();
     }
 }

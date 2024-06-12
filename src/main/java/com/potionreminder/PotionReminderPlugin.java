@@ -1,6 +1,7 @@
 package com.potionreminder;
 
 import com.google.inject.Provides;
+import static com.potionreminder.Status.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.IntUnaryOperator;
@@ -23,21 +24,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 )
 public class PotionReminderPlugin extends Plugin
 {
-	public enum Status
-	{
-		STAMINA,
-		ANTIFIRE,
-		ANTIPOISON,
-		ANTIVENOM
-	}
-
-	private static final Map<Status, String> EXPIRATION_MESSAGE = Map.of(
-			Status.STAMINA, "Stamina",
-			Status.ANTIFIRE, "Anti-fire",
-			Status.ANTIPOISON, "Anti-poison",
-			Status.ANTIVENOM, "Anti-venom"
-	);
-
 	private final Map<Status, NotificationTimer> timers = new HashMap<>();
 	private static final int STAMINA_MULTIPLIER = 10;
 
@@ -56,7 +42,7 @@ public class PotionReminderPlugin extends Plugin
 		if (event.getVarbitId() == Varbits.STAMINA_EFFECT && config.showStamina())
 		{
 			final int totalDuration = client.getVarbitValue(Varbits.STAMINA_EFFECT);
-			handleTimer(Status.STAMINA, totalDuration, i -> i * STAMINA_MULTIPLIER);
+			handleTimer(STAMINA, totalDuration, i -> i * STAMINA_MULTIPLIER);
 		}
 	}
 
@@ -78,8 +64,8 @@ public class PotionReminderPlugin extends Plugin
 
 	public void notifyClient(Status status)
 	{
-		String message = EXPIRATION_MESSAGE.get(status);
-		notifier.notify(message);
+		String statusName = status.getStatusName();
+		notifier.notify(statusName + " is expiring!");
 	}
 
 	private void handleTimer(final Status status, final int varValue, final IntUnaryOperator tickDuration)

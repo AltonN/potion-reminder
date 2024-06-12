@@ -23,13 +23,20 @@ import net.runelite.client.plugins.PluginDescriptor;
 )
 public class PotionReminderPlugin extends Plugin
 {
-	private enum Status
+	public enum Status
 	{
 		STAMINA,
 		ANTIFIRE,
 		ANTIPOISON,
 		ANTIVENOM
 	}
+
+	private static final Map<Status, String> EXPIRATION_MESSAGE = Map.of(
+			Status.STAMINA, "Stamina",
+			Status.ANTIFIRE, "Anti-fire",
+			Status.ANTIPOISON, "Anti-poison",
+			Status.ANTIVENOM, "Anti-venom"
+	);
 
 	private final Map<Status, NotificationTimer> timers = new HashMap<>();
 	private static final int STAMINA_MULTIPLIER = 10;
@@ -58,10 +65,7 @@ public class PotionReminderPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN)
 		{
-			for (Status key : timers.keySet())
-			{
-				removeTimer(key);
-			}
+			resetTimers();
 		}
 
 	}
@@ -72,9 +76,10 @@ public class PotionReminderPlugin extends Plugin
 		return configManager.getConfig(PotionReminderConfig.class);
 	}
 
-	public void notifyClient()
+	public void notifyClient(Status status)
 	{
-		notifier.notify("Stamina enhancement is expiring!");
+		String message = EXPIRATION_MESSAGE.get(status);
+		notifier.notify(message);
 	}
 
 	private void handleTimer(final Status status, final int varValue, final IntUnaryOperator tickDuration)
@@ -101,10 +106,18 @@ public class PotionReminderPlugin extends Plugin
 		}
 	}
 
+	private void resetTimers()
+	{
+		for (Status key : timers.keySet())
+		{
+			removeTimer(key);
+		}
+	}
+
 	private void createTimer(final Status status, final int ticks)
 	{
 		removeTimer(status);
-		NotificationTimer newTimer = new NotificationTimer(ticks, this, config);
+		NotificationTimer newTimer = new NotificationTimer(ticks, this, config, status);
 		timers.put(status, newTimer);
 	}
 

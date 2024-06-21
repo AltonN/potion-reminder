@@ -62,7 +62,7 @@ public class PotionReminderPlugin extends Plugin
 		return configManager.getConfig(PotionReminderConfig.class);
 	}
 
-	public void notifyClient(Status status)
+	private void notifyClient(Status status)
 	{
 		String statusName = status.getStatusName();
 		notifier.notify(statusName + " is expiring!");
@@ -103,7 +103,7 @@ public class PotionReminderPlugin extends Plugin
 	private void createTimer(final Status status, final int ticks)
 	{
 		removeTimer(status);
-		NotificationTimer newTimer = new NotificationTimer(ticks, this, config, status);
+		NotificationTimer newTimer = new NotificationTimer(ticks, config, () -> notifyClient(status));
 		timers.put(status, newTimer);
 	}
 

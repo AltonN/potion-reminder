@@ -10,19 +10,17 @@ import net.runelite.client.util.RSTimeUnit;
 public class NotificationTimer
 {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final PotionReminderPlugin plugin;
     private final PotionReminderConfig config;
-    private final Status status;
+    private final Runnable callback;
     private Instant endTime;
     private int ticks;
 
-    NotificationTimer(final int ticks, PotionReminderPlugin plugin, PotionReminderConfig config, Status status)
+    NotificationTimer(final int ticks, PotionReminderConfig config, Runnable callback)
     {
         final Duration duration = Duration.of(ticks, RSTimeUnit.GAME_TICKS);
         this.endTime = Instant.now().plus(duration);
-        this.plugin = plugin;
+        this.callback = callback;
         this.config = config;
-        this.status = status;
         this.ticks = ticks;
 
         scheduler.scheduleAtFixedRate(this::checkDuration, 0, 200, TimeUnit.MILLISECONDS);
@@ -33,7 +31,7 @@ public class NotificationTimer
         Duration remainingTime = Duration.between(Instant.now(), endTime);
         if (remainingTime.toMillis() <= config.notificationOffset())
         {
-            plugin.notifyClient(status);
+            callback.run();
             stop();
         }
     }

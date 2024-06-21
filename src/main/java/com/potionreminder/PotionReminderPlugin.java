@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.VarPlayer;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.Varbits;
@@ -26,6 +27,10 @@ public class PotionReminderPlugin extends Plugin
 {
 	private final Map<Status, NotificationTimer> timers = new HashMap<>();
 	private static final int STAMINA_MULTIPLIER = 10;
+	private static final int ANTIFIRE_MULTIPLIER = 30;
+	private static final int SUPER_ANTIFIRE_MULTIPLIER = 20;
+	private static final int ANTIPOISON_MULTIPLIER = 30;
+	private static final int ANTIVENOM_MULTIPLIER = 30;
 
 	@Inject
 	private Client client;
@@ -43,6 +48,18 @@ public class PotionReminderPlugin extends Plugin
 		{
 			final int totalDuration = client.getVarbitValue(Varbits.STAMINA_EFFECT);
 			handleTimer(STAMINA, totalDuration, i -> i * STAMINA_MULTIPLIER);
+		}
+
+		if (event.getVarbitId() == Varbits.ANTIFIRE && config.showAntifire())
+		{
+			final int totalDuration = client.getVarbitValue(Varbits.ANTIFIRE);
+			handleTimer(ANTIFIRE, totalDuration, i -> i * ANTIFIRE_MULTIPLIER);
+		}
+
+		if (event.getVarbitId() == Varbits.SUPER_ANTIFIRE && config.showSuperAntifire())
+		{
+			final int totalDuration = client.getVarbitValue(Varbits.SUPER_ANTIFIRE);
+			handleTimer(SUPER_ANTIFIRE, totalDuration, i -> i * SUPER_ANTIFIRE_MULTIPLIER);
 		}
 	}
 

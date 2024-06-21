@@ -3,6 +3,7 @@ package com.potionreminder;
 enum Status {
     STAMINA("Stamina"),
     ANTIFIRE("Antifire"),
+    SUPER_ANTIFIRE("Super antifire"),
     ANTIPOISON("Antipoison"),
     ANTIVENOM("Anti-venom"),
     ;

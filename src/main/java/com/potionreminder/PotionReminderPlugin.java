@@ -67,14 +67,16 @@ public class PotionReminderPlugin extends Plugin
 		}
 
 		// Antipoison
-		if (event.getVarpId() == VarPlayer.POISON && event.getValue() >= VENOM_VALUE_CUTOFF && event.getValue() < 0)
+		if (event.getVarpId() == VarPlayer.POISON && config.showAntipoison()
+				&& event.getValue() >= VENOM_VALUE_CUTOFF && event.getValue() < 0)
 		{
 			final int tickDuration = Math.abs(event.getValue()) * ANTIPOISON_MULTIPLIER;
 			handleTimer(ANTIPOISON, tickDuration);
 		}
 
 		// Anti-venom
-		if (event.getVarpId() == VarPlayer.POISON && event.getValue() < VENOM_VALUE_CUTOFF)
+		if (event.getVarpId() == VarPlayer.POISON && config.showAntivenom()
+				&& event.getValue() < VENOM_VALUE_CUTOFF)
 		{
 			final int tickDuration = Math.abs(event.getValue() - VENOM_VALUE_CUTOFF) * ANTIVENOM_MULTIPLIER;
 			handleTimer(ANTIVENOM, tickDuration);

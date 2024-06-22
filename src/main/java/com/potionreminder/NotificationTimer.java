@@ -29,7 +29,7 @@ public class NotificationTimer
     private void checkDuration()
     {
         Duration remainingTime = Duration.between(Instant.now(), endTime);
-        if (remainingTime.toMillis() <= config.notificationOffset())
+        if (remainingTime.toSeconds() <= config.notificationOffset())
         {
             callback.run();
             stop();

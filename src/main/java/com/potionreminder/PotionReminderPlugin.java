@@ -46,20 +46,20 @@ public class PotionReminderPlugin extends Plugin
 	{
 		if (event.getVarbitId() == Varbits.STAMINA_EFFECT && config.showStamina())
 		{
-			final int totalDuration = client.getVarbitValue(Varbits.STAMINA_EFFECT);
-			handleTimer(STAMINA, totalDuration, i -> i * STAMINA_MULTIPLIER);
+			final int tickDuration = event.getValue() * STAMINA_MULTIPLIER;
+			handleTimer(STAMINA, tickDuration);
 		}
 
 		if (event.getVarbitId() == Varbits.ANTIFIRE && config.showAntifire())
 		{
-			final int totalDuration = client.getVarbitValue(Varbits.ANTIFIRE);
-			handleTimer(ANTIFIRE, totalDuration, i -> i * ANTIFIRE_MULTIPLIER);
+			final int tickDuration = event.getValue() * ANTIFIRE_MULTIPLIER;
+			handleTimer(ANTIFIRE, tickDuration);
 		}
 
 		if (event.getVarbitId() == Varbits.SUPER_ANTIFIRE && config.showSuperAntifire())
 		{
-			final int totalDuration = client.getVarbitValue(Varbits.SUPER_ANTIFIRE);
-			handleTimer(SUPER_ANTIFIRE, totalDuration, i -> i * SUPER_ANTIFIRE_MULTIPLIER);
+			final int tickDuration = event.getValue() * SUPER_ANTIFIRE_MULTIPLIER;
+			handleTimer(SUPER_ANTIFIRE, tickDuration);
 		}
 	}
 
@@ -70,7 +70,6 @@ public class PotionReminderPlugin extends Plugin
 		{
 			resetTimers();
 		}
-
 	}
 
 	@Provides
@@ -85,42 +84,28 @@ public class PotionReminderPlugin extends Plugin
 		notifier.notify(statusName + " is expiring!");
 	}
 
-	private void handleTimer(final Status status, final int varValue, final IntUnaryOperator tickDuration)
-	{
-		int durationTicks = tickDuration.applyAsInt(varValue);
-		handleTimer(status, durationTicks);
-	}
-
-	private void handleTimer(final Status status, final int ticks)
+	private void handleTimer(final Status status, final int numTicks)
 	{
 		NotificationTimer timer = timers.get(status);
 
-		if (ticks <= 0)
+		if (numTicks <= 0)
 		{
 			removeTimer(status);
 		}
-		else if (timer == null || ticks > timer.getTicks())
+		else if (timer == null || numTicks > timer.getTicks())
 		{
-			createTimer(status, ticks);
+			createTimer(status, numTicks);
 		}
 		else
 		{
-			timer.setTicks(ticks);
+			timer.setTicks(numTicks);
 		}
 	}
 
-	private void resetTimers()
-	{
-		for (Status key : timers.keySet())
-		{
-			removeTimer(key);
-		}
-	}
-
-	private void createTimer(final Status status, final int ticks)
+	private void createTimer(final Status status, final int numTicks)
 	{
 		removeTimer(status);
-		NotificationTimer newTimer = new NotificationTimer(ticks, config, () -> notifyClient(status));
+		NotificationTimer newTimer = new NotificationTimer(numTicks, config, () -> notifyClient(status));
 		timers.put(status, newTimer);
 	}
 
@@ -130,6 +115,14 @@ public class PotionReminderPlugin extends Plugin
 		if (timer != null)
 		{
 			timer.stop();
+		}
+	}
+
+	private void resetTimers()
+	{
+		for (Status key : timers.keySet())
+		{
+			removeTimer(key);
 		}
 	}
 }

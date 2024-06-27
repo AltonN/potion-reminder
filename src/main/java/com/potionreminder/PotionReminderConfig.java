@@ -12,13 +12,30 @@ public interface PotionReminderConfig extends Config
 			keyName = "notificationOffset",
 			name = "Notification Offset",
 			description = "The amount of seconds before potion expires to notify.",
-			position = 2
+			position = -4
 	)
 	@Units(Units.SECONDS)
 	default int notificationOffset()
 	{
 		return 0;
 	}
+
+	@ConfigItem(
+			keyName = "displayInfobox",
+			name = "Display Infobox",
+			description = "Display an infobox when potion is no longer active.",
+			position = -3
+	)
+	default boolean displayInfobox() { return true; }
+
+	@ConfigItem(
+			keyName = "infoboxDuration",
+			name = "Infobox Duration",
+			description = "The amount of seconds the infobox lasts before expiring.",
+			position = -2
+	)
+	@Units(Units.SECONDS)
+	default int infoboxDuration() { return 15; }
 
 	@ConfigItem(
 			keyName = "showStamina",

@@ -2,6 +2,7 @@ package com.potionreminder;
 
 import com.google.inject.Provides;
 import static com.potionreminder.Status.*;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.RSTimeUnit;
 
 @Slf4j
 @PluginDescriptor(
@@ -48,38 +50,38 @@ public class PotionReminderPlugin extends Plugin
 		// Stamina
 		if (event.getVarbitId() == Varbits.STAMINA_EFFECT && config.showStamina())
 		{
-			final int tickDuration = event.getValue() * STAMINA_MULTIPLIER;
-			handleTimer(STAMINA, tickDuration);
+			final int numTicks = event.getValue() * STAMINA_MULTIPLIER;
+			handlePotionTimer(STAMINA, numTicks);
 		}
 
 		// Antifire
 		if (event.getVarbitId() == Varbits.ANTIFIRE && config.showAntifire())
 		{
-			final int tickDuration = event.getValue() * ANTIFIRE_MULTIPLIER;
-			handleTimer(ANTIFIRE, tickDuration);
+			final int numTicks = event.getValue() * ANTIFIRE_MULTIPLIER;
+			handlePotionTimer(ANTIFIRE, numTicks);
 		}
 
 		// Super antifire
 		if (event.getVarbitId() == Varbits.SUPER_ANTIFIRE && config.showSuperAntifire())
 		{
-			final int tickDuration = event.getValue() * SUPER_ANTIFIRE_MULTIPLIER;
-			handleTimer(SUPER_ANTIFIRE, tickDuration);
+			final int numTicks = event.getValue() * SUPER_ANTIFIRE_MULTIPLIER;
+			handlePotionTimer(SUPER_ANTIFIRE, numTicks);
 		}
 
 		// Antipoison
 		if (event.getVarpId() == VarPlayer.POISON && config.showAntipoison()
 				&& event.getValue() >= VENOM_VALUE_CUTOFF && event.getValue() < 0)
 		{
-			final int tickDuration = Math.abs(event.getValue()) * ANTIPOISON_MULTIPLIER;
-			handleTimer(ANTIPOISON, tickDuration);
+			final int numTicks = Math.abs(event.getValue()) * ANTIPOISON_MULTIPLIER;
+			handlePotionTimer(ANTIPOISON, numTicks);
 		}
 
 		// Anti-venom
 		if (event.getVarpId() == VarPlayer.POISON && config.showAntivenom()
 				&& event.getValue() < VENOM_VALUE_CUTOFF)
 		{
-			final int tickDuration = Math.abs(event.getValue() - VENOM_VALUE_CUTOFF) * ANTIVENOM_MULTIPLIER;
-			handleTimer(ANTIVENOM, tickDuration);
+			final int numTicks = Math.abs(event.getValue() - VENOM_VALUE_CUTOFF) * ANTIVENOM_MULTIPLIER;
+			handlePotionTimer(ANTIVENOM, numTicks);
 		}
 	}
 
@@ -98,34 +100,35 @@ public class PotionReminderPlugin extends Plugin
 		return configManager.getConfig(PotionReminderConfig.class);
 	}
 
-	private void notifyClient(Status status)
+	private void handlePotionExpire(Status status)
 	{
 		String statusName = status.getStatusName();
 		notifier.notify(statusName + " is expiring!");
 	}
 
-	private void handleTimer(final Status status, final int numTicks)
+	private void handlePotionTimer(final Status status, final int numTicks)
 	{
 		NotificationTimer timer = timers.get(status);
+		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
 
-		if (numTicks <= 0)
+		if (duration.isZero())
 		{
 			removeTimer(status);
 		}
-		else if (timer == null || numTicks > timer.getTicks())
+		else if (timer == null || duration.compareTo(timer.getDuration()) > 0)
 		{
-			createTimer(status, numTicks);
+			createTimer(status, duration);
 		}
 		else
 		{
-			timer.setTicks(numTicks);
+			timer.setDuration(duration);
 		}
 	}
 
-	private void createTimer(final Status status, final int numTicks)
+	private void createTimer(final Status status, final Duration duration)
 	{
 		removeTimer(status);
-		NotificationTimer newTimer = new NotificationTimer(numTicks, config, () -> notifyClient(status));
+		NotificationTimer newTimer = new NotificationTimer(duration, () -> handlePotionExpire(status));
 		timers.put(status, newTimer);
 	}
 

@@ -5,47 +5,41 @@ import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import net.runelite.client.util.RSTimeUnit;
 
 public class NotificationTimer
 {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private final PotionReminderConfig config;
     private final Runnable callback;
+    private Duration duration;
     private Instant endTime;
-    private int ticks;
 
-    NotificationTimer(final int ticks, PotionReminderConfig config, Runnable callback)
+    NotificationTimer(final Duration duration, Runnable callback)
     {
-        final Duration duration = Duration.of(ticks, RSTimeUnit.GAME_TICKS);
-        this.endTime = Instant.now().plus(duration);
+        this.duration = duration;
         this.callback = callback;
-        this.config = config;
-        this.ticks = ticks;
+        this.endTime = Instant.now().plus(duration);
 
         scheduler.scheduleAtFixedRate(this::checkDuration, 0, 200, TimeUnit.MILLISECONDS);
     }
 
     private void checkDuration()
     {
-        Duration remainingTime = Duration.between(Instant.now(), endTime);
-        if (remainingTime.toSeconds() <= config.notificationOffset())
+        if (Instant.now().compareTo(endTime) >= 0)
         {
             callback.run();
             stop();
         }
     }
 
-    public int getTicks()
+    public Duration getDuration()
     {
-        return this.ticks;
+        return this.duration;
     }
 
-    public void setTicks(final int ticks)
+    public void setDuration(final Duration duration)
     {
-        final Duration duration = Duration.of(ticks, RSTimeUnit.GAME_TICKS);
+        this.duration = duration;
         this.endTime = Instant.now().plus(duration);
-        this.ticks = ticks;
     }
 
     public void stop()

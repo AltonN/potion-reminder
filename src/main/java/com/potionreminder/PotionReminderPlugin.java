@@ -26,7 +26,7 @@ import net.runelite.client.util.RSTimeUnit;
 )
 public class PotionReminderPlugin extends Plugin
 {
-	private final Map<Status, NotificationTimer> timers = new HashMap<>();
+	private final Map<Status, Timer> timers = new HashMap<>();
 	private static final int STAMINA_MULTIPLIER = 10;
 	private static final int ANTIFIRE_MULTIPLIER = 30;
 	private static final int SUPER_ANTIFIRE_MULTIPLIER = 20;
@@ -108,7 +108,7 @@ public class PotionReminderPlugin extends Plugin
 
 	private void handlePotionTimer(final Status status, final int numTicks)
 	{
-		NotificationTimer timer = timers.get(status);
+		Timer timer = timers.get(status);
 		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
 
 		if (duration.isZero())
@@ -121,20 +121,20 @@ public class PotionReminderPlugin extends Plugin
 		}
 		else
 		{
-			timer.setDuration(duration);
+			timer.updateDuration(duration);
 		}
 	}
 
 	private void createTimer(final Status status, final Duration duration)
 	{
 		removeTimer(status);
-		NotificationTimer newTimer = new NotificationTimer(duration, () -> handlePotionExpire(status));
+		Timer newTimer = new Timer(duration, () -> handlePotionExpire(status));
 		timers.put(status, newTimer);
 	}
 
 	private void removeTimer(final Status status)
 	{
-		final NotificationTimer timer = timers.remove(status);
+		final Timer timer = timers.remove(status);
 		if (timer != null)
 		{
 			timer.stop();

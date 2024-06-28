@@ -6,14 +6,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class NotificationTimer
+public class Timer
 {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Runnable callback;
     private Duration duration;
     private Instant endTime;
 
-    NotificationTimer(final Duration duration, Runnable callback)
+    Timer(final Duration duration, Runnable callback)
     {
         this.duration = duration;
         this.callback = callback;
@@ -36,7 +36,7 @@ public class NotificationTimer
         return this.duration;
     }
 
-    public void setDuration(final Duration duration)
+    public void updateDuration(final Duration duration)
     {
         this.duration = duration;
         this.endTime = Instant.now().plus(duration);

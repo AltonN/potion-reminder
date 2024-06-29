@@ -6,7 +6,7 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Units;
 
-@ConfigGroup("example")
+@ConfigGroup("potion-reminder")
 public interface PotionReminderConfig extends Config
 {
 	@ConfigItem(

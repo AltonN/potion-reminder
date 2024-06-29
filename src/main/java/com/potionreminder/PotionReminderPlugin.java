@@ -165,18 +165,19 @@ public class PotionReminderPlugin extends Plugin
 
 	private void createInfoBox(final Status status)
 	{
+		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
 		PotionInfoBox infoBox = new PotionInfoBox(this);
 		infoBox.setImage(itemManager.getImage(status.getImageId()));
 		infoBox.setTooltip(status.getStatusName() + " expired");
 
-		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
+		removeInfoBox(status);
 		infoBoxPairs.put(status, new InfoBoxPair(infoBoxTimer, infoBox));
 		infoBoxManager.addInfoBox(infoBox);
 	}
 
 	private void removeInfoBox(Status status)
 	{
-		final InfoBoxPair infoBoxPair = infoBoxPairs.get(status);
+		final InfoBoxPair infoBoxPair = infoBoxPairs.remove(status);
 		if (infoBoxPair != null)
 		{
 			infoBoxPair.getTimer().stop();

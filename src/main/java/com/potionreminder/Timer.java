@@ -5,12 +5,13 @@ import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
 
 public class Timer
 {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    @Getter private Duration duration;
     private final Runnable callback;
-    private Duration duration;
     private Instant endTime;
 
     Timer(final Duration duration, Runnable callback)
@@ -19,7 +20,7 @@ public class Timer
         this.callback = callback;
         this.endTime = Instant.now().plus(duration);
 
-        scheduler.scheduleAtFixedRate(this::checkDuration, 0, 200, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(this::checkDuration, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     private void checkDuration()
@@ -29,11 +30,6 @@ public class Timer
             callback.run();
             stop();
         }
-    }
-
-    public Duration getDuration()
-    {
-        return this.duration;
     }
 
     public void updateDuration(final Duration duration)

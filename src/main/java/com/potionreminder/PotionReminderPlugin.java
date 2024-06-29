@@ -2,10 +2,12 @@ package com.potionreminder;
 
 import com.google.inject.Provides;
 import static com.potionreminder.Status.*;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -16,8 +18,10 @@ import net.runelite.api.Varbits;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.RSTimeUnit;
 
 @Slf4j
@@ -26,7 +30,11 @@ import net.runelite.client.util.RSTimeUnit;
 )
 public class PotionReminderPlugin extends Plugin
 {
-	private final Map<Status, Timer> timers = new HashMap<>();
+	@Value static class InfoBoxPair { Timer timer; PotionInfoBox infoBox; }
+
+	private final Map<Status, Timer> potionTimers = new HashMap<>();
+	private final Map<Status, InfoBoxPair> infoBoxPairs = new HashMap<>();
+
 	private static final int STAMINA_MULTIPLIER = 10;
 	private static final int ANTIFIRE_MULTIPLIER = 30;
 	private static final int SUPER_ANTIFIRE_MULTIPLIER = 20;
@@ -39,10 +47,16 @@ public class PotionReminderPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private PotionReminderConfig config;
+
+	@Inject
 	private Notifier notifier;
 
 	@Inject
-	private PotionReminderConfig config;
+	private InfoBoxManager infoBoxManager;
+
+	@Inject
+	private ItemManager itemManager;
 
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
@@ -70,7 +84,7 @@ public class PotionReminderPlugin extends Plugin
 
 		// Antipoison
 		if (event.getVarpId() == VarPlayer.POISON && config.showAntipoison()
-				&& event.getValue() >= VENOM_VALUE_CUTOFF && event.getValue() < 0)
+				&& event.getValue() >= VENOM_VALUE_CUTOFF && event.getValue() <= 0)
 		{
 			final int numTicks = Math.abs(event.getValue()) * ANTIPOISON_MULTIPLIER;
 			handlePotionTimer(ANTIPOISON, numTicks);
@@ -78,7 +92,7 @@ public class PotionReminderPlugin extends Plugin
 
 		// Anti-venom
 		if (event.getVarpId() == VarPlayer.POISON && config.showAntivenom()
-				&& event.getValue() < VENOM_VALUE_CUTOFF)
+				&& event.getValue() <= VENOM_VALUE_CUTOFF)
 		{
 			final int numTicks = Math.abs(event.getValue() - VENOM_VALUE_CUTOFF) * ANTIVENOM_MULTIPLIER;
 			handlePotionTimer(ANTIVENOM, numTicks);
@@ -90,7 +104,7 @@ public class PotionReminderPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN)
 		{
-			resetTimers();
+			resetPotionTimers();
 		}
 	}
 
@@ -100,52 +114,72 @@ public class PotionReminderPlugin extends Plugin
 		return configManager.getConfig(PotionReminderConfig.class);
 	}
 
-	private void handlePotionExpire(Status status)
-	{
-		String statusName = status.getStatusName();
-		notifier.notify(statusName + " is expiring!");
-	}
-
 	private void handlePotionTimer(final Status status, final int numTicks)
 	{
-		Timer timer = timers.get(status);
+		Timer potionTimer = potionTimers.get(status);
 		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
 
-		if (duration.isZero())
+		if ((duration.isZero() || duration.isNegative()) && config.displayInfoBox())
 		{
-			removeTimer(status);
+			createInfoBox(status);
 		}
-		else if (timer == null || duration.compareTo(timer.getDuration()) > 0)
+		else if (potionTimer == null || duration.compareTo(potionTimer.getDuration()) > 0)
 		{
-			createTimer(status, duration);
+			createPotionTimer(status, duration);
 		}
 		else
 		{
-			timer.updateDuration(duration);
+			potionTimer.updateDuration(duration);
 		}
 	}
 
-	private void createTimer(final Status status, final Duration duration)
+	private void createPotionTimer(final Status status, final Duration duration)
 	{
-		removeTimer(status);
-		Timer newTimer = new Timer(duration, () -> handlePotionExpire(status));
-		timers.put(status, newTimer);
+		if (infoBoxPairs.containsKey(status))
+		{
+			removeInfoBox(infoBoxPairs.get(status).getInfoBox());
+		}
+		cancelPotionTimer(status);
+
+		Timer potionTimer = new Timer(duration, () -> handlePotionExpire(status));
+		potionTimers.put(status, potionTimer);
 	}
 
-	private void removeTimer(final Status status)
+	private void cancelPotionTimer(final Status status)
 	{
-		final Timer timer = timers.remove(status);
+		final Timer timer = potionTimers.remove(status);
 		if (timer != null)
 		{
 			timer.stop();
 		}
 	}
 
-	private void resetTimers()
+	private void resetPotionTimers()
 	{
-		for (Status key : timers.keySet())
+		for (Status key : potionTimers.keySet())
 		{
-			removeTimer(key);
+			cancelPotionTimer(key);
 		}
+	}
+
+	private void handlePotionExpire(final Status status)
+	{
+		notifier.notify(status.getStatusName() + " is expiring!");
+	}
+
+	private void createInfoBox(final Status status)
+	{
+		PotionInfoBox infoBox = new PotionInfoBox(this);
+		infoBox.setImage(itemManager.getImage(status.getImageId()));
+		infoBox.setTooltip(status.getStatusName() + " expired");
+
+		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(infoBox));
+		infoBoxPairs.put(status, new InfoBoxPair(infoBoxTimer, infoBox));
+		infoBoxManager.addInfoBox(infoBox);
+	}
+
+	private void removeInfoBox(PotionInfoBox infoBox)
+	{
+		infoBoxManager.removeInfoBox(infoBox);
 	}
 }

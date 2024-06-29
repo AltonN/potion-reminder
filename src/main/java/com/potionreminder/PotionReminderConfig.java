@@ -3,6 +3,7 @@ package com.potionreminder;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Units;
 
 @ConfigGroup("example")
@@ -12,7 +13,7 @@ public interface PotionReminderConfig extends Config
 			keyName = "notificationOffset",
 			name = "Notification Offset",
 			description = "The amount of seconds before potion expires to notify.",
-			position = -4
+			position = 1
 	)
 	@Units(Units.SECONDS)
 	default int notificationOffset()
@@ -21,26 +22,34 @@ public interface PotionReminderConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "displayInfobox",
-			name = "Display Infobox",
+			keyName = "displayInfoBox",
+			name = "Display InfoBox",
 			description = "Display an infobox when potion is no longer active.",
-			position = -3
+			position = 2
 	)
-	default boolean displayInfobox() { return true; }
+	default boolean displayInfoBox() { return true; }
 
 	@ConfigItem(
-			keyName = "infoboxDuration",
-			name = "Infobox Duration",
+			keyName = "infoBoxDuration",
+			name = "InfoBox Duration",
 			description = "The amount of seconds the infobox lasts before expiring.",
-			position = -2
+			position = 3
 	)
 	@Units(Units.SECONDS)
-	default int infoboxDuration() { return 15; }
+	default int infoBoxDuration() { return 15; }
+
+	@ConfigSection(
+			name = "Potion Options",
+			description = "",
+			position = 4
+	)
+	String potionOptions = "potionOptions";
 
 	@ConfigItem(
 			keyName = "showStamina",
 			name = "Stamina",
-			description = ""
+			description = "",
+			section = potionOptions
 	)
 	default boolean showStamina()
 	{
@@ -50,7 +59,8 @@ public interface PotionReminderConfig extends Config
 	@ConfigItem(
 			keyName = "showAntifire",
 			name = "Antifire",
-			description = ""
+			description = "",
+			section = potionOptions
 	)
 	default boolean showAntifire()
 	{
@@ -60,7 +70,8 @@ public interface PotionReminderConfig extends Config
 	@ConfigItem(
 			keyName = "showSuperAntifire",
 			name = "Super Antifire",
-			description = ""
+			description = "",
+			section = potionOptions
 	)
 	default boolean showSuperAntifire()
 	{
@@ -70,7 +81,8 @@ public interface PotionReminderConfig extends Config
 	@ConfigItem(
 			keyName = "showAntipoison",
 			name = "Antipoison",
-			description = ""
+			description = "",
+			section = potionOptions
 	)
 	default boolean showAntipoison()
 	{
@@ -80,7 +92,8 @@ public interface PotionReminderConfig extends Config
 	@ConfigItem(
 			keyName = "showAntivenom",
 			name = "Antivenom",
-			description = ""
+			description = "",
+			section = potionOptions
 	)
 	default boolean showAntivenom()
 	{

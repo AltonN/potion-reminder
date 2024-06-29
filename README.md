@@ -4,10 +4,9 @@ Alerts the user when potions are about to expire and displays an infobox (e.g. S
 
 ## Todo
 
-- Optimize Timer class
-- Removed on death cases
-- Ring of endurance for stamina
+- Removed-on-death cases
 - Divine potions
 - Raid potions
 - NMZ Overloads
 - Imbued Heart
+- Optimize Timer class

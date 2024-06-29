@@ -62,9 +62,13 @@ public class PotionReminderPlugin extends Plugin
 	public void onVarbitChanged(VarbitChanged event)
 	{
 		// Stamina
-		if (event.getVarbitId() == Varbits.STAMINA_EFFECT && config.showStamina())
+		if ((event.getVarbitId() == Varbits.STAMINA_EFFECT || event.getVarbitId() == Varbits.RING_OF_ENDURANCE_EFFECT)
+				&& config.showStamina())
 		{
-			final int numTicks = event.getValue() * STAMINA_MULTIPLIER;
+			int staminaPotionEffect = client.getVarbitValue(Varbits.STAMINA_EFFECT);
+			int enduranceRingEffect = client.getVarbitValue(Varbits.RING_OF_ENDURANCE_EFFECT);
+
+			final int numTicks = (staminaPotionEffect + enduranceRingEffect) * STAMINA_MULTIPLIER;
 			handlePotionTimer(STAMINA, numTicks);
 		}
 
@@ -118,6 +122,7 @@ public class PotionReminderPlugin extends Plugin
 	{
 		Timer potionTimer = potionTimers.get(status);
 		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
+		System.out.println(duration);
 
 		if ((duration.isZero() || duration.isNegative()) && config.displayInfoBox())
 		{

@@ -122,7 +122,6 @@ public class PotionReminderPlugin extends Plugin
 	{
 		Timer potionTimer = potionTimers.get(status);
 		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
-		System.out.println(duration);
 
 		if ((duration.isZero() || duration.isNegative()) && config.displayInfoBox())
 		{
@@ -131,6 +130,7 @@ public class PotionReminderPlugin extends Plugin
 		else if (potionTimer == null || duration.compareTo(potionTimer.getDuration()) > 0)
 		{
 			createPotionTimer(status, duration);
+			removeInfoBox(status);
 		}
 		else
 		{
@@ -140,12 +140,7 @@ public class PotionReminderPlugin extends Plugin
 
 	private void createPotionTimer(final Status status, final Duration duration)
 	{
-		if (infoBoxPairs.containsKey(status))
-		{
-			removeInfoBox(infoBoxPairs.get(status).getInfoBox());
-		}
 		cancelPotionTimer(status);
-
 		Timer potionTimer = new Timer(duration, () -> handlePotionExpire(status));
 		potionTimers.put(status, potionTimer);
 	}
@@ -178,13 +173,18 @@ public class PotionReminderPlugin extends Plugin
 		infoBox.setImage(itemManager.getImage(status.getImageId()));
 		infoBox.setTooltip(status.getStatusName() + " expired");
 
-		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(infoBox));
+		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
 		infoBoxPairs.put(status, new InfoBoxPair(infoBoxTimer, infoBox));
 		infoBoxManager.addInfoBox(infoBox);
 	}
 
-	private void removeInfoBox(PotionInfoBox infoBox)
+	private void removeInfoBox(Status status)
 	{
-		infoBoxManager.removeInfoBox(infoBox);
+		final InfoBoxPair infoBoxPair = infoBoxPairs.get(status);
+		if (infoBoxPair != null)
+		{
+			infoBoxPair.getTimer().stop();
+			infoBoxManager.removeInfoBox(infoBoxPair.getInfoBox());
+		}
 	}
 }

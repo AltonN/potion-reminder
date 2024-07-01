@@ -99,4 +99,92 @@ public interface PotionReminderConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigItem(
+			keyName = "showDivineSuperAttack",
+			name = "Divine Super Attack",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineSuperAttack()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineSuperStrength",
+			name = "Divine Super Strength",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineSuperStrength()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineSuperDefence",
+			name = "Divine Super Defence",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineSuperDefence()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineSuperCombat",
+			name = "Divine Super Combat",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineSuperCombat()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineRanging",
+			name = "Divine Ranging",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineRanging()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineMagic",
+			name = "Divine Magic",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineMagic()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineBastion",
+			name = "Divine Bastion",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineBastion()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "showDivineBattlemage",
+			name = "Divine Battlemage",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showDivineBattlemage()
+	{
+		return true;
+	}
 }

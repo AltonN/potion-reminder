@@ -10,6 +10,14 @@ enum Status {
     SUPER_ANTIFIRE("Super antifire", ItemID.SUPER_ANTIFIRE_POTION4),
     ANTIPOISON("Antipoison", ItemID.ANTIPOISON4),
     ANTIVENOM("Anti-venom", ItemID.ANTIVENOM4),
+    DIVINE_SUPER_ATTACK("Divine super attack", ItemID.DIVINE_SUPER_ATTACK_POTION4),
+    DIVINE_SUPER_STRENGTH("Divine super strength", ItemID.DIVINE_SUPER_STRENGTH_POTION4),
+    DIVINE_SUPER_DEFENCE("Divine super defence", ItemID.DIVINE_SUPER_DEFENCE_POTION4),
+    DIVINE_SUPER_COMBAT("Divine super combat", ItemID.DIVINE_SUPER_COMBAT_POTION4),
+    DIVINE_RANGING("Divine ranging", ItemID.DIVINE_RANGING_POTION4),
+    DIVINE_MAGIC("Divine magic", ItemID.DIVINE_MAGIC_POTION4),
+    DIVINE_BASTION("Divine bastion", ItemID.DIVINE_BASTION_POTION4),
+    DIVINE_BATTLEMAGE("Divine battlemage", ItemID.DIVINE_BATTLEMAGE_POTION4),
     ;
 
     private final String statusName;

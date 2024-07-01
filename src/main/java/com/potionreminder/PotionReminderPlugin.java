@@ -101,6 +101,119 @@ public class PotionReminderPlugin extends Plugin
 			final int numTicks = Math.abs(event.getValue() - VENOM_VALUE_CUTOFF) * ANTIVENOM_MULTIPLIER;
 			handlePotionTimer(ANTIVENOM, numTicks);
 		}
+
+		// Divine super attack
+		if (event.getVarbitId() == Varbits.DIVINE_SUPER_ATTACK && config.showDivineSuperAttack())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks < client.getVarbitValue(Varbits.DIVINE_SUPER_COMBAT))
+			{
+				return;
+			}
+			handlePotionTimer(DIVINE_SUPER_ATTACK, numTicks);
+		}
+
+		// Divine super strength
+		if (event.getVarbitId() == Varbits.DIVINE_SUPER_STRENGTH && config.showDivineSuperAttack())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks < client.getVarbitValue(Varbits.DIVINE_SUPER_COMBAT))
+			{
+				return;
+			}
+			handlePotionTimer(DIVINE_SUPER_STRENGTH, numTicks);
+		}
+
+		// Divine super defence
+		if (event.getVarbitId() == Varbits.DIVINE_SUPER_DEFENCE && config.showDivineSuperDefence())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks < client.getVarbitValue(Varbits.DIVINE_SUPER_COMBAT)
+					|| numTicks < client.getVarbitValue(Varbits.DIVINE_BASTION)
+					|| numTicks < client.getVarbitValue(Varbits.DIVINE_BATTLEMAGE))
+			{
+				return;
+			}
+			handlePotionTimer(DIVINE_SUPER_DEFENCE, numTicks);
+		}
+
+		// Divine super combat
+		if (event.getVarbitId() == Varbits.DIVINE_SUPER_COMBAT && config.showDivineSuperCombat())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_SUPER_ATTACK))
+			{
+				cancelPotionTimer(DIVINE_SUPER_ATTACK);
+				removeInfoBox(DIVINE_SUPER_ATTACK);
+			}
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_SUPER_STRENGTH))
+			{
+				cancelPotionTimer(DIVINE_SUPER_STRENGTH);
+				removeInfoBox(DIVINE_SUPER_STRENGTH);
+			}
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_SUPER_DEFENCE))
+			{
+				cancelPotionTimer(DIVINE_SUPER_DEFENCE);
+				removeInfoBox(DIVINE_SUPER_DEFENCE);
+			}
+			handlePotionTimer(DIVINE_SUPER_COMBAT, numTicks);
+		}
+
+		// Divine ranging
+		if (event.getVarbitId() == Varbits.DIVINE_RANGING && config.showDivineRanging())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks < client.getVarbitValue(Varbits.DIVINE_BASTION))
+			{
+				return;
+			}
+			handlePotionTimer(DIVINE_RANGING, numTicks);
+		}
+
+		// Divine magic
+		if (event.getVarbitId() == Varbits.DIVINE_MAGIC && config.showDivineMagic())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks < client.getVarbitValue(Varbits.DIVINE_BATTLEMAGE))
+			{
+				return;
+			}
+			handlePotionTimer(DIVINE_MAGIC, numTicks);
+		}
+
+		// Divine bastion
+		if (event.getVarbitId() == Varbits.DIVINE_BASTION && config.showDivineBastion())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_RANGING))
+			{
+				cancelPotionTimer(DIVINE_RANGING);
+				removeInfoBox(DIVINE_RANGING);
+			}
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_SUPER_DEFENCE))
+			{
+				cancelPotionTimer(DIVINE_SUPER_DEFENCE);
+				removeInfoBox(DIVINE_SUPER_DEFENCE);
+			}
+			handlePotionTimer(DIVINE_BASTION, numTicks);
+		}
+
+		// Divine battlemage
+		if (event.getVarbitId() == Varbits.DIVINE_BATTLEMAGE && config.showDivineBattlemage())
+		{
+			final int numTicks = event.getValue();
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_MAGIC))
+			{
+				cancelPotionTimer(DIVINE_MAGIC);
+				removeInfoBox(DIVINE_MAGIC);
+			}
+			if (numTicks == client.getVarbitValue(Varbits.DIVINE_SUPER_DEFENCE))
+			{
+				cancelPotionTimer(DIVINE_SUPER_DEFENCE);
+				removeInfoBox(DIVINE_SUPER_DEFENCE);
+			}
+			handlePotionTimer(DIVINE_BATTLEMAGE, numTicks);
+		}
 	}
 
 	@Subscribe

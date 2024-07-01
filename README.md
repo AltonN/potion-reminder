@@ -5,13 +5,14 @@ Alerts the user when potion status effects are expiring and displays an infobox.
 ## Todo
 
 - Removed-on-death cases
-- Divine potions
 - Raid potions
 - NMZ Overloads
 - Imbued Heart
 - Optimize Timer class
-- Add onConfigChanged
-- Add notify text config
+- onConfigChanged
+- Notification config
+- Notify text config
+- Combat only config
 
 ## Known Issues
 

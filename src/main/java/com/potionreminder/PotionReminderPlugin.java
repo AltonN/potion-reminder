@@ -114,7 +114,7 @@ public class PotionReminderPlugin extends Plugin
 		}
 
 		// Divine super strength
-		if (event.getVarbitId() == Varbits.DIVINE_SUPER_STRENGTH && config.showDivineSuperAttack())
+		if (event.getVarbitId() == Varbits.DIVINE_SUPER_STRENGTH && config.showDivineSuperStrength())
 		{
 			final int numTicks = event.getValue();
 			if (numTicks < client.getVarbitValue(Varbits.DIVINE_SUPER_COMBAT))
@@ -273,7 +273,7 @@ public class PotionReminderPlugin extends Plugin
 
 	private void handlePotionExpire(final Status status)
 	{
-		notifier.notify(status.getStatusName() + " is expiring!");
+		notifier.notify(config.expirationNotification(),status.getStatusName() + " is expiring!");
 	}
 
 	private void createInfoBox(final Status status)

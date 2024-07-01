@@ -4,11 +4,20 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Notification;
 import net.runelite.client.config.Units;
 
 @ConfigGroup("potion-reminder")
 public interface PotionReminderConfig extends Config
 {
+	@ConfigItem(
+			keyName = "expirationNotification",
+			name = "Expiration Notification",
+			description = "Send a notification when potion is expiring.",
+			position = 0
+	)
+	default Notification expirationNotification() { return Notification.ON; }
+
 	@ConfigItem(
 			keyName = "notificationOffset",
 			name = "Notification Offset",

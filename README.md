@@ -10,8 +10,6 @@ Alerts the user when potion status effects are expiring and displays an infobox.
 - Imbued Heart
 - Optimize Timer class
 - onConfigChanged
-- Notification config
-- Notify text config
 - Combat only config
 
 ## Known Issues

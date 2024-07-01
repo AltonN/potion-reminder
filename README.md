@@ -1,6 +1,6 @@
 # Potion Reminder
 
-Alerts the user when potions are about to expire and displays an infobox (e.g. Stamina, Antifire, etc.)
+Alerts the user when potion status effects are expiring and displays an infobox.
 
 ## Todo
 
@@ -11,6 +11,7 @@ Alerts the user when potions are about to expire and displays an infobox (e.g. S
 - Imbued Heart
 - Optimize Timer class
 - Add onConfigChanged
+- Add notify text config
 
 ## Known Issues
 

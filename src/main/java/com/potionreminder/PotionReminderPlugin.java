@@ -17,7 +17,9 @@ import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.Varbits;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.Notification;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -213,6 +215,76 @@ public class PotionReminderPlugin extends Plugin
 				removeInfoBox(DIVINE_SUPER_DEFENCE);
 			}
 			handlePotionTimer(DIVINE_BATTLEMAGE, numTicks);
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (!event.getGroup().equals(PotionReminderConfig.CONFIG_GROUP))
+		{
+			return;
+		}
+
+		if (config.expirationNotification() == Notification.OFF)
+		{
+			cancelPotionTimers();
+		}
+
+		if (!config.displayInfoBox())
+		{
+			removeInfoBoxes();
+		}
+
+		Status status = null;
+		String key = event.getKey();
+		switch (key)
+		{
+			case "showStamina":
+				status = STAMINA;
+				break;
+			case "showAntifire":
+				status = ANTIFIRE;
+				break;
+			case "showSuperAntifire":
+				status = SUPER_ANTIFIRE;
+				break;
+			case "showAntipoison":
+				status = ANTIPOISON;
+				break;
+			case "showAntivenom":
+				status = ANTIVENOM;
+				break;
+			case "showDivineSuperAttack":
+				status = DIVINE_SUPER_ATTACK;
+				break;
+			case "showDivineSuperStrength":
+				status = DIVINE_SUPER_STRENGTH;
+				break;
+			case "showDivineSuperDefence":
+				status = DIVINE_SUPER_DEFENCE;
+				break;
+			case "showDivineSuperCombat":
+				status = DIVINE_SUPER_COMBAT;
+				break;
+			case "showDivineRanging":
+				status = DIVINE_RANGING;
+				break;
+			case "showDivineMagic":
+				status = DIVINE_MAGIC;
+				break;
+			case "showDivineBastion":
+				status = DIVINE_BASTION;
+				break;
+			case "showDivineBattlemage":
+				status = DIVINE_BATTLEMAGE;
+				break;
+		}
+
+		if (status != null)
+		{
+			cancelPotionTimer(status);
+			removeInfoBox(status);
 		}
 	}
 

@@ -221,11 +221,8 @@ public class PotionReminderPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN)
 		{
-			for (Status key : Status.values())
-			{
-				cancelPotionTimer(key);
-				removeInfoBox(key);
-			}
+			cancelPotionTimers();
+			removeInfoBoxes();
 		}
 	}
 
@@ -295,6 +292,22 @@ public class PotionReminderPlugin extends Plugin
 		{
 			infoBoxPair.getTimer().stop();
 			infoBoxManager.removeInfoBox(infoBoxPair.getInfoBox());
+		}
+	}
+
+	private void cancelPotionTimers()
+	{
+		for (Status key : Status.values())
+		{
+			cancelPotionTimer(key);
+		}
+	}
+
+	private void removeInfoBoxes()
+	{
+		for (Status key : Status.values())
+		{
+			removeInfoBox(key);
 		}
 	}
 }

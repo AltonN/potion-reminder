@@ -70,10 +70,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showStamina()
-	{
-		return true;
-	}
+	default boolean showStamina() { return true; }
 
 	@ConfigItem(
 			keyName = "showAntifire",
@@ -81,10 +78,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showAntifire()
-	{
-		return true;
-	}
+	default boolean showAntifire() { return true; }
 
 	@ConfigItem(
 			keyName = "showSuperAntifire",
@@ -92,10 +86,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showSuperAntifire()
-	{
-		return true;
-	}
+	default boolean showSuperAntifire() { return true; }
 
 	@ConfigItem(
 			keyName = "showAntipoison",
@@ -103,10 +94,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showAntipoison()
-	{
-		return true;
-	}
+	default boolean showAntipoison() { return true; }
 
 	@ConfigItem(
 			keyName = "showAntivenom",
@@ -114,10 +102,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showAntivenom()
-	{
-		return true;
-	}
+	default boolean showAntivenom() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineSuperAttack",
@@ -125,10 +110,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineSuperAttack()
-	{
-		return true;
-	}
+	default boolean showDivineSuperAttack() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineSuperStrength",
@@ -136,10 +118,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineSuperStrength()
-	{
-		return true;
-	}
+	default boolean showDivineSuperStrength() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineSuperDefence",
@@ -147,10 +126,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineSuperDefence()
-	{
-		return true;
-	}
+	default boolean showDivineSuperDefence() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineSuperCombat",
@@ -158,10 +134,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineSuperCombat()
-	{
-		return true;
-	}
+	default boolean showDivineSuperCombat() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineRanging",
@@ -169,10 +142,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineRanging()
-	{
-		return true;
-	}
+	default boolean showDivineRanging() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineMagic",
@@ -180,10 +150,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineMagic()
-	{
-		return true;
-	}
+	default boolean showDivineMagic() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineBastion",
@@ -191,10 +158,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineBastion()
-	{
-		return true;
-	}
+	default boolean showDivineBastion() { return true; }
 
 	@ConfigItem(
 			keyName = "showDivineBattlemage",
@@ -202,10 +166,7 @@ public interface PotionReminderConfig extends Config
 			description = "",
 			section = potionOptions
 	)
-	default boolean showDivineBattlemage()
-	{
-		return true;
-	}
+	default boolean showDivineBattlemage() { return true; }
 
 	@ConfigItem(
 			keyName = "showImbuedHeart",

@@ -7,9 +7,11 @@ import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Notification;
 import net.runelite.client.config.Units;
 
-@ConfigGroup("potion-reminder")
+@ConfigGroup(PotionReminderConfig.CONFIG_GROUP)
 public interface PotionReminderConfig extends Config
 {
+	String CONFIG_GROUP = "potionReminder";
+
 	@ConfigItem(
 			keyName = "expirationNotification",
 			name = "Expiration Notification",

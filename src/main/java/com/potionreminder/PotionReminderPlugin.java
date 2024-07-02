@@ -42,6 +42,7 @@ public class PotionReminderPlugin extends Plugin
 	private static final int SUPER_ANTIFIRE_MULTIPLIER = 20;
 	private static final int ANTIPOISON_MULTIPLIER = 30;
 	private static final int ANTIVENOM_MULTIPLIER = 30;
+	private static final int IMBUED_HEART_MULTIPLIER = 10;
 
 	private static final int VENOM_VALUE_CUTOFF = -38;
 
@@ -215,6 +216,13 @@ public class PotionReminderPlugin extends Plugin
 				removeInfoBox(DIVINE_SUPER_DEFENCE);
 			}
 			handlePotionTimer(DIVINE_BATTLEMAGE, numTicks);
+		}
+
+		// Imbued heart
+		if (event.getVarbitId() == Varbits.MAGIC_IMBUE && config.showImbuedHeart())
+		{
+			final int numTicks = event.getValue() * IMBUED_HEART_MULTIPLIER;
+			handlePotionTimer(IMBUED_HEART, numTicks);
 		}
 	}
 

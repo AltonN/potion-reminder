@@ -7,8 +7,9 @@ Alerts the user when potion status effects are expiring and displays an infobox.
 - Removed-on-death cases
 - Raid potions
 - NMZ Overloads
-- Imbued Heart
 - Optimize Timer class
+- Use EnumMap
+- Test Imbued Heart
 
 ## Known Issues
 

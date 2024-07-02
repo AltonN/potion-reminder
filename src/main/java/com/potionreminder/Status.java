@@ -18,6 +18,7 @@ enum Status {
     DIVINE_MAGIC("Divine magic", ItemID.DIVINE_MAGIC_POTION4),
     DIVINE_BASTION("Divine bastion", ItemID.DIVINE_BASTION_POTION4),
     DIVINE_BATTLEMAGE("Divine battlemage", ItemID.DIVINE_BATTLEMAGE_POTION4),
+    IMBUED_HEART("Imbued heart", ItemID.IMBUED_HEART)
     ;
 
     private final String statusName;

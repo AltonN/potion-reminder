@@ -206,4 +206,12 @@ public interface PotionReminderConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigItem(
+			keyName = "showImbuedHeart",
+			name = "Show Imbued Heart",
+			description = "",
+			section = potionOptions
+	)
+	default boolean showImbuedHeart() { return true; }
 }

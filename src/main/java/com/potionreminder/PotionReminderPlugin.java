@@ -230,7 +230,6 @@ public class PotionReminderPlugin extends Plugin
 		{
 			cancelPotionTimers();
 		}
-
 		if (!config.displayInfoBox())
 		{
 			removeInfoBoxes();
@@ -348,7 +347,7 @@ public class PotionReminderPlugin extends Plugin
 	private void createInfoBox(final Status status)
 	{
 		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
-		PotionInfoBox infoBox = new PotionInfoBox(this);
+		PotionInfoBox infoBox = new PotionInfoBox(client, config,this);
 		infoBox.setImage(itemManager.getImage(status.getImageId()));
 		infoBox.setTooltip(status.getStatusName() + " expired");
 

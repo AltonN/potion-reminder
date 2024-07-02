@@ -47,12 +47,20 @@ public interface PotionReminderConfig extends Config
 			position = 3
 	)
 	@Units(Units.SECONDS)
-	default int infoBoxDuration() { return 15; }
+	default int infoBoxDuration() { return 30; }
+
+	@ConfigItem(
+			keyName = "hideWhenOutOfCombat",
+			name = "Hide When Out of Combat",
+			description = "Hide InfoBoxes when out of combat",
+			position = 4
+	)
+	default boolean hideWhenOutOfCombat() { return false; }
 
 	@ConfigSection(
 			name = "Potion Options",
 			description = "",
-			position = 4
+			position = 5
 	)
 	String potionOptions = "potionOptions";
 

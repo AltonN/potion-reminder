@@ -9,8 +9,6 @@ Alerts the user when potion status effects are expiring and displays an infobox.
 - NMZ Overloads
 - Imbued Heart
 - Optimize Timer class
-- onConfigChanged
-- Combat only config
 
 ## Known Issues
 

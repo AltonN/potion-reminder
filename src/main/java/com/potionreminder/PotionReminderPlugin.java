@@ -4,7 +4,7 @@ import com.google.inject.Provides;
 import static com.potionreminder.Status.*;
 
 import java.time.Duration;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import javax.inject.Inject;
 import lombok.Value;
@@ -34,8 +34,8 @@ public class PotionReminderPlugin extends Plugin
 {
 	@Value static class InfoBoxPair { Timer timer; PotionInfoBox infoBox; }
 
-	private final Map<Status, Timer> potionTimers = new HashMap<>();
-	private final Map<Status, InfoBoxPair> infoBoxPairs = new HashMap<>();
+	private final Map<Status, Timer> potionTimers = new EnumMap<>(Status.class);
+	private final Map<Status, InfoBoxPair> infoBoxPairs = new EnumMap<>(Status.class);
 
 	private static final int STAMINA_MULTIPLIER = 10;
 	private static final int ANTIFIRE_MULTIPLIER = 30;

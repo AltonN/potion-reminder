@@ -32,9 +32,9 @@ import net.runelite.client.util.RSTimeUnit;
 )
 public class PotionReminderPlugin extends Plugin
 {
-	@Value static class InfoBoxPair { Timer timer; PotionInfoBox infoBox; }
+	@Value static class InfoBoxPair { CallbackTimer timer; PotionInfoBox infoBox; }
 
-	private final Map<Status, Timer> potionTimers = new EnumMap<>(Status.class);
+	private final Map<Status, CallbackTimer> potionTimers = new EnumMap<>(Status.class);
 	private final Map<Status, InfoBoxPair> infoBoxPairs = new EnumMap<>(Status.class);
 
 	private static final int STAMINA_MULTIPLIER = 10;
@@ -313,37 +313,37 @@ public class PotionReminderPlugin extends Plugin
 
 	private void handlePotionTimer(final Status status, final int numTicks)
 	{
-		Timer potionTimer = potionTimers.get(status);
+		CallbackTimer timer = potionTimers.get(status);
 		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
 
 		if ((duration.isZero() || duration.isNegative()) && config.displayInfoBox())
 		{
 			createInfoBox(status);
 		}
-		else if (potionTimer == null || duration.compareTo(potionTimer.getDuration()) > 0)
+		else if (timer == null || duration.compareTo(timer.getDuration()) > 0)
 		{
 			createPotionTimer(status, duration);
 			removeInfoBox(status);
 		}
 		else
 		{
-			potionTimer.updateDuration(duration);
+			timer.updateDuration(duration);
 		}
 	}
 
 	private void createPotionTimer(final Status status, final Duration duration)
 	{
 		cancelPotionTimer(status);
-		Timer potionTimer = new Timer(duration, () -> handlePotionExpire(status));
-		potionTimers.put(status, potionTimer);
+		CallbackTimer timer = new CallbackTimer(duration, () -> handlePotionExpire(status));
+		potionTimers.put(status, timer);
 	}
 
 	private void cancelPotionTimer(final Status status)
 	{
-		final Timer timer = potionTimers.remove(status);
+		final CallbackTimer timer = potionTimers.remove(status);
 		if (timer != null)
 		{
-			timer.stop();
+			timer.cancelTimer();
 		}
 	}
 
@@ -354,13 +354,13 @@ public class PotionReminderPlugin extends Plugin
 
 	private void createInfoBox(final Status status)
 	{
-		Timer infoBoxTimer = new Timer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
+		CallbackTimer timer = new CallbackTimer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
 		PotionInfoBox infoBox = new PotionInfoBox(client, config,this);
 		infoBox.setImage(itemManager.getImage(status.getImageId()));
 		infoBox.setTooltip(status.getStatusName() + " expired");
 
 		removeInfoBox(status);
-		infoBoxPairs.put(status, new InfoBoxPair(infoBoxTimer, infoBox));
+		infoBoxPairs.put(status, new InfoBoxPair(timer, infoBox));
 		infoBoxManager.addInfoBox(infoBox);
 	}
 
@@ -369,7 +369,7 @@ public class PotionReminderPlugin extends Plugin
 		final InfoBoxPair infoBoxPair = infoBoxPairs.remove(status);
 		if (infoBoxPair != null)
 		{
-			infoBoxPair.getTimer().stop();
+			infoBoxPair.getTimer().cancelTimer();
 			infoBoxManager.removeInfoBox(infoBoxPair.getInfoBox());
 		}
 	}

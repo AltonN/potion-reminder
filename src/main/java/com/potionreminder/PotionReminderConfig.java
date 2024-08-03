@@ -170,7 +170,7 @@ public interface PotionReminderConfig extends Config
 
 	@ConfigItem(
 			keyName = "showImbuedHeart",
-			name = "Show Imbued Heart",
+			name = "Imbued Heart",
 			description = "",
 			section = potionOptions
 	)

@@ -10,14 +10,12 @@ class PotionInfoBox extends InfoBox
 {
     private final Client client;
     private final PotionReminderConfig config;
-    private final PotionReminderPlugin plugin;
 
     public PotionInfoBox(Client client, PotionReminderConfig config, PotionReminderPlugin plugin)
     {
         super(null, plugin);
         this.client = client;
         this.config = config;
-        this.plugin = plugin;
 
         setPriority(InfoBoxPriority.HIGH);
     }

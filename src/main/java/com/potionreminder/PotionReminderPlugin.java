@@ -314,24 +314,24 @@ public class PotionReminderPlugin extends Plugin
 	private void handlePotionTimer(final Status status, final int numTicks)
 	{
 		CallbackTimer timer = potionTimers.get(status);
-		Duration duration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset());
+		long newDuration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset()).toMillis();
 
-		if ((duration.isZero() || duration.isNegative()) && config.displayInfoBox())
+		if (newDuration <= 0 && config.displayInfoBox())
 		{
 			createInfoBox(status);
 		}
-		else if (timer == null || duration.compareTo(timer.getDuration()) > 0)
+		else if (timer == null || newDuration > timer.getDuration())
 		{
-			createPotionTimer(status, duration);
+			createPotionTimer(status, newDuration);
 			removeInfoBox(status);
 		}
-		else
+		else if (newDuration > 0 && newDuration <= timer.getDuration())
 		{
-			timer.updateDuration(duration);
+			timer.updateDuration(newDuration);
 		}
 	}
 
-	private void createPotionTimer(final Status status, final Duration duration)
+	private void createPotionTimer(final Status status, final long duration)
 	{
 		cancelPotionTimer(status);
 		CallbackTimer timer = new CallbackTimer(duration, () -> handlePotionExpire(status));
@@ -354,7 +354,7 @@ public class PotionReminderPlugin extends Plugin
 
 	private void createInfoBox(final Status status)
 	{
-		CallbackTimer timer = new CallbackTimer(Duration.ofSeconds(config.infoBoxDuration()), () -> removeInfoBox(status));
+		CallbackTimer timer = new CallbackTimer((long)config.infoBoxDuration()*1000, () -> removeInfoBox(status));
 		PotionInfoBox infoBox = new PotionInfoBox(client, config,this);
 		infoBox.setImage(itemManager.getImage(status.getImageId()));
 		infoBox.setTooltip(status.getStatusName() + " expired");

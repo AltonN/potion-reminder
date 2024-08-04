@@ -44,8 +44,9 @@ public class PotionReminderPlugin extends Plugin
 	private static final int ANTIPOISON_MULTIPLIER = 30;
 	private static final int ANTIVENOM_MULTIPLIER = 30;
 	private static final int IMBUED_HEART_MULTIPLIER = 10;
-
 	private static final int VENOM_VALUE_CUTOFF = -38;
+
+	private GameState currentGameState; // Prevent displaying InfoBoxes while hopping worlds
 
 	@Inject
 	private Client client;
@@ -299,6 +300,7 @@ public class PotionReminderPlugin extends Plugin
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
+		currentGameState = gameStateChanged.getGameState();
 		if (gameStateChanged.getGameState() == GameState.LOGIN_SCREEN)
 		{
 			cancelPotionTimers();
@@ -334,6 +336,12 @@ public class PotionReminderPlugin extends Plugin
 
 	private void handlePotionTimer(final Status status, final int numTicks)
 	{
+		// Prevent displaying InfoBoxes while hopping worlds
+		if (currentGameState == GameState.HOPPING)
+		{
+			return;
+		}
+
 		CallbackTimer timer = potionTimers.get(status);
 		long newDuration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset()).toMillis();
 

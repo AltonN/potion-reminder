@@ -10,4 +10,3 @@ Alerts the user when potion status effects are expiring and displays an infobox.
   - Smelling Salts (ToA)
   - Overload (NMZ)
 - Test Imbued Heart
-- Fix world-hop infobox bug

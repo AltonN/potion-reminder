@@ -383,7 +383,7 @@ public class PotionReminderPlugin extends Plugin
 
 	private void createInfoBox(final Status status)
 	{
-		CallbackTimer timer = new CallbackTimer((long)config.infoBoxDuration()*1000, () -> removeInfoBox(status));
+		CallbackTimer timer = new CallbackTimer((long)config.infoBoxTimeout()*1000, () -> removeInfoBox(status));
 		PotionInfoBox infoBox = new PotionInfoBox(client, config,this);
 		infoBox.setImage(itemManager.getImage(status.getImageId()));
 		infoBox.setTooltip(status.getStatusName() + " expired");

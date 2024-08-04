@@ -41,13 +41,13 @@ public interface PotionReminderConfig extends Config
 	default boolean displayInfoBox() { return true; }
 
 	@ConfigItem(
-			keyName = "infoBoxDuration",
-			name = "InfoBox Duration",
+			keyName = "infoBoxTimeout",
+			name = "InfoBox Timeout",
 			description = "The amount of seconds the infobox lasts before expiring.",
 			position = 3
 	)
 	@Units(Units.SECONDS)
-	default int infoBoxDuration() { return 30; }
+	default int infoBoxTimeout() { return 60; }
 
 	@ConfigItem(
 			keyName = "hideWhenOutOfCombat",

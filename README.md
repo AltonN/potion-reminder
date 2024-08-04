@@ -11,4 +11,3 @@ Alerts the user when potion status effects are expiring and displays an infobox.
   - Overload (NMZ)
 - Test Imbued Heart
 - Fix world-hop infobox bug
-- Fix infobox appearing on notification

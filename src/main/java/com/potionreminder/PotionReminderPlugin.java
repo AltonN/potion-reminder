@@ -336,9 +336,8 @@ public class PotionReminderPlugin extends Plugin
 	{
 		CallbackTimer timer = potionTimers.get(status);
 		long newDuration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset()).toMillis();
-		System.out.println("numTicks: " + numTicks);
 
-		if (newDuration <= 0 && config.displayInfoBox())
+		if (numTicks <= 0 && config.displayInfoBox())
 		{
 			createInfoBox(status);
 		}

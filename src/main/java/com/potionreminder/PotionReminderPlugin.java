@@ -228,6 +228,13 @@ public class PotionReminderPlugin extends Plugin
 		}
 	}
 
+	@Override
+	protected void shutDown()
+	{
+		cancelPotionTimers();
+		removeInfoBoxes();
+	}
+
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{

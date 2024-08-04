@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.VarPlayer;
+import net.runelite.api.events.ActorDeath;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.Varbits;
@@ -305,6 +306,26 @@ public class PotionReminderPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	public void onActorDeath(ActorDeath actorDeath)
+	{
+		for (Status status : potionTimers.keySet())
+		{
+			if (status.isRemovedOnDeath())
+			{
+				cancelPotionTimer(status);
+			}
+		}
+
+		for (Status status : infoBoxPairs.keySet())
+		{
+			if (status.isRemovedOnDeath())
+			{
+				removeInfoBox(status);
+			}
+		}
+	}
+
 	@Provides
     PotionReminderConfig provideConfig(ConfigManager configManager)
 	{
@@ -315,6 +336,7 @@ public class PotionReminderPlugin extends Plugin
 	{
 		CallbackTimer timer = potionTimers.get(status);
 		long newDuration = Duration.of(numTicks, RSTimeUnit.GAME_TICKS).minusSeconds(config.notificationOffset()).toMillis();
+		System.out.println("numTicks: " + numTicks);
 
 		if (newDuration <= 0 && config.displayInfoBox())
 		{

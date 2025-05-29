@@ -9,4 +9,4 @@ Alerts the user when potion status effects are expiring and displays an infobox.
   - Prayer Enhance (CoX)
   - Smelling Salts (ToA)
   - Overload (NMZ)
-- Test Imbued Heart
+- Imbued Heart
